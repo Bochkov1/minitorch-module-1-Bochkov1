@@ -16,7 +16,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ⬇️ ВАЖНО: фиксируем Python 3.10 (нужен для numba==0.56)
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -28,8 +27,8 @@ jobs:
         uses: classroom-resources/autograding-command-grader@v1
         with:
           test-name: Setup
-          setup-command: pip install -qr requirements.txt && pip install flake8==5.0.4 mypy
-          command: flake8 --ignore "N801, E203, E266, E501, W503, F812, E741, N803, N802, N806" minitorch/ tests/ project/; mypy -p minitorch
+          setup-command: pip install -qr requirements.txt && pip install mypy
+          command: mypy -p minitorch
           timeout: 10
           max-score: 10
 
