@@ -54,6 +54,10 @@ class Variable(Protocol):
     def chain_rule(self, d_output: Any) -> Iterable[Tuple["Variable", Any]]:
         pass
 
+    @property
+    def history(self) -> Any:
+        pass
+
 
 def topological_sort(variable: Variable) -> Iterable[Variable]:
     """
