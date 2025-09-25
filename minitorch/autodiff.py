@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Iterable, List, Tuple
-
+from typing import Any, Iterable, Tuple
 from typing_extensions import Protocol
 
 # ## Task 1.1
@@ -22,8 +21,13 @@ def central_difference(f: Any, *vals: Any, arg: int = 0, epsilon: float = 1e-6) 
     Returns:
         An approximation of $f'_i(x_0, \ldots, x_{n-1})$
     """
-    # TODO: Implement for Task 1.1.
-    raise NotImplementedError("Need to implement for Task 1.1")
+    plus = list(vals)
+    minus = list(vals)
+
+    plus[arg] = plus[arg] + epsilon
+    minus[arg] = minus[arg] - epsilon
+
+    return (f(*plus) - f(*minus)) / (2.0 * epsilon)
 
 
 variable_count = 1
@@ -61,8 +65,33 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
     Returns:
         Non-constant Variables in topological order starting from the right.
     """
-    # TODO: Implement for Task 1.4.
-    raise NotImplementedError("Need to implement for Task 1.4")
+    order = []
+    old = set()
+    stack = [(variable, False)]
+
+    while stack:
+        node, was = stack.pop()
+
+        if node.is_constant():
+            continue
+
+        ids = id(node)
+        if was:
+            if ids not in old:
+                old.add(ids)
+                order.append(node)
+            continue
+
+        if ids in old:
+            continue
+        stack.append((node, True))
+        h = node.history
+        if h is not None and h.last_fn is not None:
+            for i in reversed(h.inputs):
+                if not i.is_constant():
+                    stack.append((i, False))
+
+    return order
 
 
 def backpropagate(variable: Variable, deriv: Any) -> None:
@@ -76,8 +105,19 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
 
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
-    # TODO: Implement for Task 1.4.
-    raise NotImplementedError("Need to implement for Task 1.4")
+    grad = {}
+    grad[id(variable)] = deriv
+
+    for i in reversed(list(topological_sort(variable))):
+        out = grad.get(id(i), 0.0)
+
+        if i.is_leaf():
+            i.accumulate_derivative(out)
+            continue
+
+        for k, m in i.chain_rule(out):
+            t = id(k)
+            grad[t] = grad.get(t, 0.0) + m
 
 
 @dataclass
