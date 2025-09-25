@@ -41,11 +41,11 @@ jobs:
         setup-command: sudo -H pip3 install -qr requirements.txt
         command: pytest -m task1_2
         timeout: 10
-    - name: task 1.3
+    - name: Task 1.3
       id: task-1-3
       uses: classroom-resources/autograding-command-grader@v1
       with:
-        test-name: task 1.3
+        test-name: Task 1.3
         setup-command: sudo -H pip3 install -qr requirements.txt
         command: pytest -m task1_3
         timeout: 10
